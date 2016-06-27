@@ -23,9 +23,11 @@ Copy the .config file for NRobotRemote from the "\WhiteRobotLibrary\packages\NRo
 
 Modify the .config file to look for the WhiteRobotLibrary.dll by replacing the default assemblies with this one: 
 
- -	<assemblies>
- -		<add name="WhiteRobotLibrary" type="WhiteRobotLibrary.WhiteKeywords" docfile="WhiteRobotLibrary.xml"/>
- -  </assemblies>
+```
+	<assemblies>
+		<add name="WhiteRobotLibrary" type="WhiteRobotLibrary.WhiteKeywords" docfile="WhiteRobotLibrary.xml"/>
+	</assemblies>
+```
 		
 Then run the NRobotRemoteTray.exe from the same directory, you should see the NRobotRemoteTray in your system tray. 
 
