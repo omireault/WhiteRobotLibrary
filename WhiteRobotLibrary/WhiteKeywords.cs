@@ -33,7 +33,7 @@ namespace WhiteRobotLibrary
     /// | Library | Remote | http://127.0.0.1:8271/WhiteRobotLibrary/WhiteKeywords | WITH NAME | White |
     /// </summary>
     /// 
-/// <summary>
+    /// <summary>
     /// Locators
     /// 
     /// The simple element locators are automationId, className, controlType, text, name and those are used as:
@@ -189,26 +189,6 @@ namespace WhiteRobotLibrary
         public void FocusOnWindow() {
             testAppWin.Focus();
         }
-
-        /// <summary>
-        /// Invokes an internal click event on the given UI-item. NOTE! Internal click events are not supported by all UI-items!
-        /// Click is executed via internal event, screen can be locked because mouse is not used.
-        /// The simple element locators are automationId, className, controlType, text, name and those are used as:
-        /// automationId=myId, className=myClassName, controlType=MenuItem, text=someText, name=someName.
-        /// The xpath is much more versatile locator, which combines the controlType, simple element locator and index, for example
-        /// | ClickObject | automationId=myId                                          |
-        /// | ClickObject | text=Some Text                                             |
-        /// | ClickObject | name=Some Name                                             |
-        /// | ClickObject | xpath=//Button[@text='Some text']                          |
-        /// | ClickObject | xpath=//MenuItem[@className=File][@text='Some Item']       |
-        /// | ClickObject | xpath=//MenuItem[1]                                        |
-        /// | ClickObject | xpath=//Edit[@automationId='001234'][@text='Some Text'][2] |
-        /// | ClickObject | xpath=//Pane[@text='x']/descendant::Button[@text='Ok'][3]  |
-        /// </summary>
-        /// <param name="elementId"></param>
-        /// public void ClickObject(String elementId) {
-        ///     (findUIObject(elementId) as UIItem).RaiseClickEvent();
-        /// }
 
         /// <summary>
         /// Clicks the given screen object using the left mouse button. The click is executed using a 'true' mouse event.
