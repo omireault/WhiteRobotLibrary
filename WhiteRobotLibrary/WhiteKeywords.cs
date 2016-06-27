@@ -26,17 +26,35 @@ namespace WhiteRobotLibrary
     /// The concept of xpath is extended here to be used as a reasonably generic locator for different screen objects.
     /// The complete list of Windows native Screen Objects (controlTypes) can be found from: http://msdn.microsoft.com/en-us/library/ms749005%28v=vs.110%29.aspx
     /// This Library requires using the NRobotRemote server, which is officially approved by the Robot Framework development team.
-    /// Commadline startup via NRobotRemote is done as (all dlls in the same directory):
-    /// | NRobotRemoteConsole.exe -p 8271 -k WhiteRobotLibrary.dll:WhiteRobotLibrary.WhiteKeywords |  
+    /// Commadline startup via NRobotRemote is done as (all dlls in the same directory) for version 1:
+    /// | NRobotRemoteConsole.exe -p 8271 -k WhiteRobotLibrary.dll:WhiteRobotLibrary.WhiteKeywords | 
+    /// Startup via NRobotRemoteTray.exe is done via the NRobotRemoteTray.exe directory (all dlls in the same directory) for version 2:
     /// Inclusion of the library in the test scripts is done as:
     /// | Library | Remote | http://127.0.0.1:8271/WhiteRobotLibrary/WhiteKeywords | WITH NAME | White |
     /// </summary>
+    /// 
+/// <summary>
+    /// Locators
+    /// 
+    /// The simple element locators are automationId, className, controlType, text, name and those are used as:
+    /// automationId=myId, className=myClassName, controlType=MenuItem, text=someText, name=someName.
+    /// The xpath is much more versatile locator, which combines the controlType, simple element locator and index, for example
+    /// | ClickObject | automationId=myId                                          |
+    /// | ClickObject | text=Some Text                                             |
+    /// | ClickObject | name=Some Name                                             |
+    /// | ClickObject | xpath=//Button[@text='Some text']                          |
+    /// | ClickObject | xpath=//MenuItem[@className=File][@text='Some Item']       |
+    /// | ClickObject | xpath=//MenuItem[1]                                        |
+    /// | ClickObject | xpath=//Edit[@automationId='001234'][@text='Some Text'][2] |
+    /// | ClickObject | xpath=//Pane[@text='x']/descendant::Button[@text='Ok'][3]  |
+    /// </summary>
+
     public class WhiteKeywords
     {
         private int waitAfterAction = 0;
         private Application testApp = null;
         private Window testAppWin = null;
-        private List<String> locators = new List<String>() {"automationId", "className", "controlType", "text", "xpath"};
+        private List<String> locators = new List<String>() {"automationId", "className", "controlType", "text", "xpath", "name"};
         private const char SEPARATOR = '=';
         private const char MENUPATHSEPARATOR = ',';
         private const char REPEATSEPARATOR = ':';
@@ -129,7 +147,7 @@ namespace WhiteRobotLibrary
 
         /// <summary>
         /// A modal window is a child element to some other window. Get the main window first and then the modal window.
-        /// With this keyword, the window can be accessed using the title of the window, e.g. Blank Page - Windows Internet Explorer
+        /// With this keyword, the window can be accessed using the title of the window, e.g. Calculator
         /// | SelectModalWindowByTitle | Calculator |
         /// </summary>
         /// <param name="modalWindowTitle"></param>
@@ -175,11 +193,12 @@ namespace WhiteRobotLibrary
         /// <summary>
         /// Invokes an internal click event on the given UI-item. NOTE! Internal click events are not supported by all UI-items!
         /// Click is executed via internal event, screen can be locked because mouse is not used.
-        /// The simple element locators are automationId, className, controlType, text and those are used as:
-        /// automationId=myId, className=myClassName, controlType=MenuItem, text=someText.
+        /// The simple element locators are automationId, className, controlType, text, name and those are used as:
+        /// automationId=myId, className=myClassName, controlType=MenuItem, text=someText, name=someName.
         /// The xpath is much more versatile locator, which combines the controlType, simple element locator and index, for example
         /// | ClickObject | automationId=myId                                          |
         /// | ClickObject | text=Some Text                                             |
+        /// | ClickObject | name=Some Name                                             |
         /// | ClickObject | xpath=//Button[@text='Some text']                          |
         /// | ClickObject | xpath=//MenuItem[@className=File][@text='Some Item']       |
         /// | ClickObject | xpath=//MenuItem[1]                                        |
@@ -187,9 +206,9 @@ namespace WhiteRobotLibrary
         /// | ClickObject | xpath=//Pane[@text='x']/descendant::Button[@text='Ok'][3]  |
         /// </summary>
         /// <param name="elementId"></param>
-        public void ClickObject(String elementId) {
-            (findUIObject(elementId) as UIItem).RaiseClickEvent();
-        }
+        /// public void ClickObject(String elementId) {
+        ///     (findUIObject(elementId) as UIItem).RaiseClickEvent();
+        /// }
 
         /// <summary>
         /// Clicks the given screen object using the left mouse button. The click is executed using a 'true' mouse event.
@@ -563,6 +582,24 @@ namespace WhiteRobotLibrary
         }
 
         /// <summary>
+        /// Returns the Toggle State of the checkbox.
+        /// The simple element locators are automationId, className, controlType, text and those are used as:
+        /// automationId=myId, className=myClassName, controlType=MenuItem, text=someText.
+        /// The xpath is much more versatile locator, which combines the controlType, simple element locator and index, for example
+        /// | UnSelectCheckBox | automationId=myCheckBox                     |
+        /// | UnSelectCheckBox | controlType=CheckBox                        |
+        /// | UnSelectCheckBox | xpath=//CheckBox[1]                         |
+        /// | UnSelectCheckBox | xpath=//CheckBox[@automationId='001234'][2] |
+        /// </summary>
+        /// <param name="elementId"></param>
+        /// <returns>On or Off</returns>
+        public string getCheckboxState(String elementId)
+        {
+            ToggleableItem togg = new ToggleableItem(findUIObject(elementId) as UIItem);
+            return togg.State.ToString();
+        }
+
+        /// <summary>
         /// Selects a RadioButton item, which is identified by the given object locator.
         /// Selection is done by invoking an internal selection event. No mouse interaction is needed.
         /// The simple element locators are automationId, className, controlType, text and those are used as:
@@ -589,7 +626,7 @@ namespace WhiteRobotLibrary
         /// <param name="menuPath"></param>
         /// <returns></returns>
         public void SelectMenuItem(String menuPath) {
-            (testAppWin.MenuBar.MenuItem(menuPath.Split(MENUPATHSEPARATOR)) as UIItem).RaiseClickEvent();
+            (testAppWin.MenuBar.MenuItem(menuPath.Split(MENUPATHSEPARATOR)) as UIItem).Click();
         }
 
 
@@ -603,7 +640,7 @@ namespace WhiteRobotLibrary
         /// <param name="menuPath"></param>
         /// <returns></returns>
         public void SelectPopupMenuItem(String menuPath) {
-            (testAppWin.Popup.Item(menuPath.Split(MENUPATHSEPARATOR)) as UIItem).RaiseClickEvent();
+            (testAppWin.Popup.Item(menuPath.Split(MENUPATHSEPARATOR)) as UIItem).Click();
         }
 
         /// <summary>
@@ -691,8 +728,19 @@ namespace WhiteRobotLibrary
         /// Sometimes can be used for refreshing the tree of UIobjects in the SUT.
         /// </summary>
         /// <param name="elementId"></param>
-        public void LogObject(String elementId) {
-            findUIObject(elementId).LogStructure();
+        public String LogObject(String elementId) {
+            String dets = (TestStack.White.Debug.Details(findUIObject(elementId).AutomationElement));
+            return dets;
+        }
+
+        /// <summary>
+        /// Keyword for testing purposes to see all the elements are found in the window.
+        /// </summary>
+        public String LogAllObject()
+        {
+            String details = "";
+            details += (TestStack.White.Debug.Details(testAppWin.AutomationElement));
+            return details;
         }
 
         /// <summary>
@@ -713,6 +761,26 @@ namespace WhiteRobotLibrary
         public void IsObjectVisible(String elementId) {
             if ( !(findUIObject(elementId).AutomationElement.Current.IsOffscreen) )
                 throw new ElementNotAvailableException("Given object is not visible");
+        }
+
+        /// <summary>
+        /// Method for quering if the given element is visible.
+        /// Returns true if it's visible, false if it's not.
+        /// </summary>
+        /// <param name="elementId"></param>
+        public bool IsElementVisible(String elementId)
+        {
+            return (!(findUIObject(elementId).AutomationElement.Current.IsOffscreen));
+        }
+
+        /// <summary>
+        /// Method for quering if the given element is in Enabled state.
+        /// Returns true if it's enabled, false if it's not.
+        /// </summary>
+        /// <param name="elementId"></param>
+        public bool IsElementEnabled(String elementId)
+        {
+            return (!(findUIObject(elementId).AutomationElement.Current.IsEnabled));
         }
 
 
@@ -748,7 +816,9 @@ namespace WhiteRobotLibrary
                     else if (attribute.Equals("className"))
                         sCrit = sCrit.AndByClassName(param);
                     else if (attribute.Equals("text"))
-                        sCrit = sCrit.AndByText(param);    
+                        sCrit = sCrit.AndByText(param);
+                    else if (attribute.Equals("name"))
+                        sCrit = sCrit.AndByText(param);
                 }
 
                 if ( (startIndex = id.IndexOf('[')) >= 0 ) {
