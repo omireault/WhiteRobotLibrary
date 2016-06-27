@@ -22,9 +22,10 @@ Once the WhiteRobotLibrary.dll has been built, you need to add the WhiteRobotLib
 Copy the .config file for NRobotRemote from the "\WhiteRobotLibrary\packages\NRobotRemote.2.0.2\lib\net46\" directory into the directory your dll was built.
 
 Modify the .config file to look for the WhiteRobotLibrary.dll by replacing the default assemblies with this one: 
-		<assemblies>
-			<add name="WhiteRobotLibrary" type="WhiteRobotLibrary.WhiteKeywords" docfile="WhiteRobotLibrary.xml"/>
-		</assemblies>
+
+<assemblies>
+	<add name="WhiteRobotLibrary" type="WhiteRobotLibrary.WhiteKeywords" docfile="WhiteRobotLibrary.xml"/>
+</assemblies>
 		
 Then run the NRobotRemoteTray.exe from the same directory, you should see the NRobotRemoteTray in your system tray. 
 
